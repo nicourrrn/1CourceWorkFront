@@ -1,26 +1,54 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js App" />
+  <main>
+    <ClientForm></ClientForm>
+    <div class="viewer">
+      <ClientList></ClientList>
+      <ExpiredProductsList></ExpiredProductsList>
+    </div>
+  </main>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import ClientList from "./components/ClientList";
+import ExpiredProductsList from "./components/ExpiredProductsList";
+import ClientForm from "./components/ClientForm";
 
 export default {
   name: "App",
   components: {
-    HelloWorld,
+    ClientList,
+    ExpiredProductsList,
+    ClientForm,
   },
+  data() {
+    return {
+      polling: null,
+    };
+  },
+  methods: {
+    updateData() {
+      this.polling = setTimeout(() => {
+        this.$store.dispatch("downloadData");
+        this.updateData();
+      }, 60000);
+    },
+  },
+  created() {
+    this.$store.dispatch("downloadData");
+    this.updateData();
+  },
+  unmounted() {
+    this.polling = null;
+  }
 };
 </script>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="sass">
+
+
+.viewer
+  display: flex
+  justify-content: space-around
+
+
 </style>
